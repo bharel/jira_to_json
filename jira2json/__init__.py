@@ -185,11 +185,10 @@ def iterate_jira_issues(base_url: str, jql: str = "", *,
                     else:
                         output[key] = next(row) or None
                 yield output
-            
-            
+
             if count < BATCH_SIZE:
                 break
-                
+
             assert count == BATCH_SIZE, (
                 "Server returned more than BATCH_SIZE issues.")
 

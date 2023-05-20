@@ -6,12 +6,13 @@ from jira2json import iterate_jira_issues, parse_issues, save_jsons_to_file
 
 DEFAULT_FILENAME = "jira_issues.jsonl"
 
+
 def _main():
     """Entry point of the program."""
     import dotenv
     dotenv.load_dotenv()
     logging.basicConfig(level=logging.WARNING)
-    
+
     args = _parse_args()
 
     jsons = iterate_jira_issues(
