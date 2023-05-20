@@ -13,7 +13,7 @@ def _main():
     try:
         import dotenv
         dotenv.load_dotenv()
-    except ImportError:
+    except ImportError:  # pragma: no cover
         pass
 
     logging.basicConfig(level=logging.WARNING)
