@@ -19,6 +19,7 @@ Supports Jira Datacenter.
 ## Installation
 
 Install the library with pip:
+
 `pip install jira2json[dotenv]`
 
 The `dotenv` extra installs the [python-dotenv](https://pypi.org/project/python-dotenv/)
@@ -32,6 +33,7 @@ The library can be used as a command line tool or as a Python library.
 ### Command line tool
 
 The command line tool is called `jira2json` and is installed with the library.
+
 Run `jira2json --help` for usage information.
 
 ### Python library
@@ -66,4 +68,5 @@ with open('issues.json', 'w') as f:
 ## Development
 
 Install the `dev` extra:
-`pip install -e .[dev]`
+
+`pip install -e .[dev,dotenv]`
