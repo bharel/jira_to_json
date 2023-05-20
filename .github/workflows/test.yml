@@ -18,7 +18,7 @@ jobs:
       - name: Install flake8
         run: pip install flake8
       - name: Lint using flake8
-        run: python -m flake8 jira2json.py tests.py
+        run: python -m flake8 jira2json tests.py
   test:
     runs-on: ${{ matrix.os }}
     strategy:
