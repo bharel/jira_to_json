@@ -1,1 +1,1 @@
-twine upload <$PackageName$>-*.whl
+twine upload jira2json-*.whl
