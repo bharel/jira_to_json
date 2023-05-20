@@ -26,10 +26,12 @@ logger = _logging.getLogger(__name__)
 BATCH_SIZE = 800
 
 # JIRA API URL for CSV
-CSV_API_PATH = '/sr/jira.issueviews:searchrequest-csv-all-fields/temp/SearchRequest.csv'
+CSV_API_PATH = (
+    '/sr/jira.issueviews:searchrequest-csv-all-fields/temp/SearchRequest.csv')
 
 
-def _log_work_parser(log_work: str | list[str] | None) -> list[dict[str, _Any]] | None:
+def _log_work_parser(log_work: str | list[str] | None
+                     ) -> list[dict[str, _Any]] | None:
     """Parse a log work string to a dictionary.
 
     Example:
@@ -59,7 +61,8 @@ def _log_work_parser(log_work: str | list[str] | None) -> list[dict[str, _Any]] 
                      value)) for value in values]
 
 
-def _comment_parser(comment: str | list[str] | None) -> list[dict[str, _Any]] | None:
+def _comment_parser(comment: str | list[str] | None
+                    ) -> list[dict[str, _Any]] | None:
     """Parse a log work string to a dictionary.
 
     Example:

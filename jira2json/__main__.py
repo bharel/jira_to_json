@@ -50,15 +50,17 @@ def _parse_args(*args: str) -> argparse.Namespace:
             A dict with the default value of the environment variable, or
             {'required': True} if the environment variable is not set.
         """
-        return {'default': value} if (value := os.getenv(key)) is not None else {
-            "required": True}
+        return ({'default': value} if (value := os.getenv(key)) is not None
+                else {"required": True})
 
-    parser.add_argument('-u', '--base_url', type=str, **_default_environ("JIRA_BASE_URL"),
+    parser.add_argument('-u', '--base_url', type=str,
+                        **_default_environ("JIRA_BASE_URL"),
                         help='The base URL of the JIRA server. '
                         'Can also be set using the JIRA_BASE_URL environment '
                         'variable.')
 
-    parser.add_argument("-t", "--token", type=str, **_default_environ("JIRA_TOKEN"),
+    parser.add_argument("-t", "--token", type=str,
+                        **_default_environ("JIRA_TOKEN"),
                         help="The API token to use for authentication. "
                         "Can also be set using the JIRA_TOKEN environment "
                         "variable.")
