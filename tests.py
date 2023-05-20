@@ -10,7 +10,6 @@ import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import weakref
 
-import requests
 from jira2json import parse_issues, iterate_jira_issues, save_jsons_to_file
 import jira2json
 
@@ -86,7 +85,7 @@ class FakeHTTPServer:
 
     def __init__(self) -> None:
         self.responses: deque[tuple[int, str]] = deque()
-        self.requests: deque[self.Request] = deque()
+        self.requests: deque[self.Request] = deque()  # type: ignore
         get_func = weakref.WeakMethod(self._do_GET)
         
         class Handler(BaseHTTPRequestHandler):
