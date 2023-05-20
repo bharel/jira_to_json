@@ -130,3 +130,4 @@ dmypy.json
 .idea
 *.whl
 jira_issues.jsonl
+.DS_Store

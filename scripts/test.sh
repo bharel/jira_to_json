@@ -1,0 +1,1 @@
+python -m coverage run --branch tests.py && coverage html

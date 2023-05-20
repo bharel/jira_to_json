@@ -4,6 +4,8 @@ import os
 from typing import Any
 from jira2json import iterate_jira_issues, parse_issues, save_jsons_to_file
 
+DEFAULT_FILENAME = "jira_issues.jsonl"
+
 def _main():
     """Entry point of the program."""
     import dotenv
@@ -16,7 +18,7 @@ def _main():
         args.base_url, args.jql, token=args.token)
     jsons = parse_issues(jsons)
 
-    with open(args.output, "w") as fileobj:
+    with args.output as fileobj:
         save_jsons_to_file(jsons, fileobj)
 
 
@@ -24,7 +26,8 @@ def _parse_args(*args: str) -> argparse.Namespace:
     """Parse the command line arguments.
 
     Args:
-        args: The command line arguments to parse.
+        args: The command line arguments to parse. If not provided, the
+            arguments are read from sys.argv.
 
     Returns:
         The parsed command line arguments.
@@ -59,7 +62,8 @@ def _parse_args(*args: str) -> argparse.Namespace:
                         "Can also be set using the JIRA_TOKEN environment "
                         "variable.")
 
-    parser.add_argument("-o", "--output", type=str, default="jira_issues.jsonl",
+    parser.add_argument("-o", "--output", type=argparse.FileType("w"),
+                        default=DEFAULT_FILENAME,
                         help="The output file to save the JSONs to. "
                         "By default, the JSONs are saved to "
                         "'jira_issues.jsonl.' "
@@ -69,6 +73,6 @@ def _parse_args(*args: str) -> argparse.Namespace:
     return result
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     """Entry point of the program."""
     _main()

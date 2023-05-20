@@ -5,10 +5,14 @@ from threading import Thread
 from types import SimpleNamespace
 from typing import cast
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import urllib.parse
+import os
+from jira2json.__main__ import _main, _parse_args, DEFAULT_FILENAME
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import weakref
+
+import requests
 
 from jira2json import parse_issues, iterate_jira_issues, save_jsons_to_file
 import jira2json
@@ -63,6 +67,9 @@ class TestParsers(TestCase):
         
         self.assertEqual(next(result)["Log Work"], "value")
 
+        with self.assertRaises(StopIteration):
+            next(result)
+
 class TestSaveJson(TestCase):
     def test_save_json(self):
         """Test saving JSON to a file."""
@@ -75,7 +82,7 @@ class TestSaveJson(TestCase):
         
         self.assertEqual(fileobj.read(), '{"key": "value"}\n')
 
-class FakeHTTPServer:
+class FakeHTTPServer:  # pragma: no cover
     @dataclass
     class Request:
         method: str
@@ -198,8 +205,104 @@ class TestIterateJiraIssues(TestCase):
         
         with self.assertRaises(AssertionError):
             sum(1 for _ in iterator)
+    
+    def test_manual_session(self):
+        """A session is given instead of a token"""
+        self.fake_server.responses.append((200, ""))  # Empty CSV
+        
+        session = requests.Session()
+        session.headers["Authorization"] = "mystuff"
+        iterator = iterate_jira_issues(self.fake_server.url, session=session)
+        
+        with self.assertRaises(StopIteration):
+            next(iterator)
+
+        self.assertEqual(
+            self.fake_server.requests[0].headers["Authorization"], "mystuff")
+        
+    def test_no_token_or_session(self):
+        """Neither a token nor a session is given"""
+        with self.assertRaises(ValueError):
+            next(iterate_jira_issues(self.fake_server.url, "hello"))
+    
+    def test_both_token_and_session(self):
+        """Both a token and a session are given"""
+        with self.assertRaises(ValueError):
+            next(iterate_jira_issues(self.fake_server.url, "hello",
+                                      token="mytoken",
+                                      session=requests.Session()))
+            
+    def test_bad_response(self):
+        """Response is not 200"""
+        self.fake_server.responses.append((500, ""))
+        with self.assertRaises(requests.HTTPError):
+            next(iterate_jira_issues(self.fake_server.url, "hello",
+                                      token="mytoken"))
+            
+    def test_repeating_header(self):
+        """Header is repeated in CSV"""
+        self.fake_server.responses.append((200, 'Key,Summary,Summary\n' +
+                                           '"hello","world","1"\n' +
+                                           '"hello","world","2"\n'))
+        iterator = iterate_jira_issues(self.fake_server.url, "hello",
+                                       token="mytoken")
+        data = next(iterator)
+        self.assertEqual(data["Summary"], ["world", "1"])
+        data = next(iterator)
+        self.assertEqual(data["Summary"], ["world", "2"])
+
+
+class MainTestCase(TestCase):
+    def test_main(self):
+        """Test main function"""
+        
+        with (patch("jira2json.__main__._parse_args") as parse_args,
+              patch("jira2json.__main__.iterate_jira_issues") as iterate_jira_issues,
+              patch("jira2json.__main__.parse_issues") as parse_issues,
+              patch("jira2json.__main__.save_jsons_to_file") as save_jsons_to_file):
+            output = io.StringIO()
+            parse_args.return_value = SimpleNamespace(jql="hello",
+                                                      base_url="world",
+                                                      token="mytoken",
+                                                      output=output)
+            iterate_jira_issues.return_value = iter([{"hello": "world"}])
+            parse_issues.return_value = iter([{"hello2": "world2"}])
+
+            _main()
+
+            iterate_jira_issues.assert_called_once_with("world", "hello",
+                                                        token="mytoken")
+            parse_issues.assert_called_once_with(iterate_jira_issues.return_value)
+            save_jsons_to_file.assert_called_once_with(
+                parse_issues.return_value, output)
+            
+
+    def test_args(self):
+        """Test argument parsing"""
+        with (patch.dict(os.environ, {"JIRA_TOKEN": "tokey_the_token"})):
+            args = _parse_args(
+                *["--base_url", "https://jira.example.com",
+                 "--jql", "project = HELLO",
+                 "--token", "mytoken"])
+            self.assertEqual(args.base_url, "https://jira.example.com")
+            self.assertEqual(args.jql, "project = HELLO")
+            self.assertEqual(args.token, "mytoken")
+            self.assertEqual(args.output.name,
+                             DEFAULT_FILENAME)
+            args.output.close()
+
+            args = _parse_args(
+                *["--base_url", "https://jira.example.com",
+                    "--jql", "project = HELLO"])
+            
+            self.assertEqual(args.token, "tokey_the_token")
+            args.output.close()
+
+            
+
+        
         
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     from unittest import main
     main()
