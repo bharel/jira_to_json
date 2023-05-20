@@ -9,8 +9,13 @@ DEFAULT_FILENAME = "jira_issues.jsonl"
 
 def _main():
     """Entry point of the program."""
-    import dotenv
-    dotenv.load_dotenv()
+
+    try:
+        import dotenv
+        dotenv.load_dotenv()
+    except ImportError:
+        pass
+
     logging.basicConfig(level=logging.WARNING)
 
     args = _parse_args()
