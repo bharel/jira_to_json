@@ -23,7 +23,7 @@ import requests as _requests
 logger = _logging.getLogger(__name__)
 
 # Must be <= 1000
-BATCH_SIZE = 100
+BATCH_SIZE = 800
 
 # JIRA API URL for CSV
 CSV_API_PATH = '/sr/jira.issueviews:searchrequest-csv-all-fields/temp/SearchRequest.csv'
