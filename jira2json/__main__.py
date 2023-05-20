@@ -41,9 +41,10 @@ def _parse_args(*args: str) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description='Convert JIRA issues to JSON format.')
 
-    parser.add_argument("--jql", type=str,
-                        help="The JQL query to use for the search. By default, "
-                        "all issues are returned.")
+    parser.add_argument(
+        "--jql", type=str,
+        help="The JQL query to use for the search. By default, "
+        "all issues are returned.")
 
     def _default_environ(key: str) -> dict[str, Any]:
         """Return a dict with the default value of an environment variable.

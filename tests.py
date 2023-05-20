@@ -46,7 +46,8 @@ class TestParsers(TestCase):
             "Comment": "datetime;author;comment;;;"}])
 
         self.assertEqual(next(result)["Comment"], [{
-            "datetime": "datetime", "author": "author", "comment": "comment;;;"}])
+            "datetime": "datetime", "author": "author",
+            "comment": "comment;;;"}])
 
         result = parse_issues([{
             "Comment": ["datetime;author;comment",
