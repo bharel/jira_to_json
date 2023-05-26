@@ -20,7 +20,7 @@ Supports Jira Datacenter.
 
 Install the library with pip:
 
-`pip install jira2json[dotenv]`
+`pip install "jira2json[dotenv]"`
 
 The `dotenv` extra installs the [python-dotenv](https://pypi.org/project/python-dotenv/)
 library, which is used to load the Jira server's url and the authentication token
