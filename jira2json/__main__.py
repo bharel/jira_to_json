@@ -12,7 +12,7 @@ def _main():
 
     try:
         import dotenv
-        dotenv.load_dotenv()
+        dotenv.load_dotenv(".env")
     except ImportError:  # pragma: no cover
         pass
 
