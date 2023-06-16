@@ -1,7 +1,7 @@
 """A module for converting JIRA issues to JSON lines format."""
 
 __author__ = "Bar Harel"
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __license__ = "MIT License"
 __all__ = ["iterate_jira_issues", "save_jsons_to_file", "parse_issues",
            "default_parsers"]
